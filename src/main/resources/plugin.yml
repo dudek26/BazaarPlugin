@@ -1,0 +1,6 @@
+name: Bazaar
+description: A plugin revolving around item and monetary economics.
+version: '${project.version}'
+main: com.dudko.bazaar.Bazaar
+api-version: '1.21'
+author: dudko_
