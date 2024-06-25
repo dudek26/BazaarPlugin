@@ -4,3 +4,12 @@ version: '${project.version}'
 main: com.dudko.bazaar.Bazaar
 api-version: '1.21'
 author: dudko_
+commands:
+  bazaar:
+    description: Main plugin command.
+    usage: /bazaar
+    permission: bazaar.admin
+  removeshop:
+    description: Removes a shop.
+    usage: /removeshop <id>
+    permission: bazaar.admin

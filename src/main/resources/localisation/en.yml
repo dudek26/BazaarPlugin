@@ -1,0 +1,13 @@
+# This plugin uses MiniMessage.
+# Check https://docs.advntr.dev/minimessage/index.html for more info about formatting with MiniMessage.
+# You can also use MiniMessage's web preview: https://webui.advntr.dev/
+
+message:
+
+  command: # <usage>
+    usage: "<red>Correct usage: <usage>"
+
+  shop: # <id>
+    removed: "<red>Removed shop <yellow><id></yellow>"
+    removed-error: "<red>No shops found"
+    created: "<green>Successfully created a shop with id <yellow><id></yellow>"
