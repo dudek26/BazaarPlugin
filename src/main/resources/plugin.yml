@@ -7,9 +7,9 @@ author: dudko_
 commands:
   bazaar:
     description: Main plugin command.
-    usage: /bazaar
+    usage: /<command>
     permission: bazaar.admin
-  removeshop:
+  removemarket:
     description: Removes a shop.
-    usage: /removeshop <id>
+    usage: /<command> <id>
     permission: bazaar.admin

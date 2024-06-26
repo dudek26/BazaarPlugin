@@ -1,7 +1,7 @@
 package com.dudko.bazaar.command;
 
 import com.dudko.bazaar.Bazaar;
-import com.dudko.bazaar.shop.GlassDisplayShop;
+import com.dudko.bazaar.market.Market;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -12,9 +12,12 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
-public class RemoveShopCommand implements CommandExecutor, TabCompleter {
+@SuppressWarnings("CallToPrintStackTrace")
+public class RemoveMarketCommand implements CommandExecutor, TabCompleter {
 
     private static final MiniMessage mm = MiniMessage.miniMessage();
     private static final Bazaar plugin = Bazaar.getPlugin();
@@ -28,9 +31,20 @@ public class RemoveShopCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        boolean success = GlassDisplayShop.remove(args[0]);
-        if (success) sender.sendMessage(parsedComponent("message.shop.removed", args[0]));
-        else sender.sendMessage(parsedComponent("message.shop.removed-error", args[0]));
+        try {
+            UUID uniqueID = UUID.fromString(args[0]);
+            Market market = plugin.getDatabase().getMarket(uniqueID);
+            if (market == null) throw new IllegalArgumentException();
+            boolean success = market.remove();
+            if (success) sender.sendMessage(parsedComponent("message.shop.removed", args[0]));
+            else sender.sendMessage(parsedComponent("message.shop.removed-error", args[0]));
+
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage(parsedComponent("message.shop.removed-error", args[0]));
+        } catch (SQLException e) {
+            sender.sendMessage(parsedComponent("message.shop.db-error", args[0]));
+            e.printStackTrace();
+        }
 
         return true;
     }

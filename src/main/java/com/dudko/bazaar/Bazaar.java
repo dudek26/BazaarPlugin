@@ -1,9 +1,11 @@
 package com.dudko.bazaar;
 
 import com.dudko.bazaar.command.BazaarCommand;
-import com.dudko.bazaar.command.RemoveShopCommand;
+import com.dudko.bazaar.command.RemoveMarketCommand;
+import com.dudko.bazaar.database.BazaarDatabase;
 import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.listener.WorldEventListener;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,15 +13,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace"})
+@SuppressWarnings({"ResultOfMethodCallIgnored", "CallToPrintStackTrace", "UnstableApiUsage"})
 public final class Bazaar extends JavaPlugin {
 
     private static Bazaar plugin;
 
     private FileConfiguration localisation;
     private FileConfiguration defaultLocalisation;
+
+    private BazaarDatabase database;
 
     /**
      * Returns the instance of the plugin.
@@ -39,8 +44,25 @@ public final class Bazaar extends JavaPlugin {
         loadDefaultLocalisation();
         loadLocalisation(getConfig().getString("localisation"));
 
+        try {
+
+            if (!getDataFolder().exists()) {
+                getDataFolder().mkdirs();
+            }
+
+            database = new BazaarDatabase(getDataFolder().getAbsolutePath() + "/data.db");
+            Bukkit.getServer().getLogger().info("[Bazaar] " + translatedString("debug.database.connection-successful"));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Bukkit
+                    .getServer()
+                    .getLogger()
+                    .severe("[Bazaar] " + translatedString("debug.database.connection-failed") + " " + ex.getMessage());
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
+
         getCommand("bazaar").setExecutor(new BazaarCommand());
-        getCommand("removeshop").setExecutor(new RemoveShopCommand());
+        getCommand("removemarket").setExecutor(new RemoveMarketCommand());
 
         getServer().getPluginManager().registerEvents(new WorldEventListener(), this);
 
@@ -49,6 +71,11 @@ public final class Bazaar extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        try {
+            database.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -146,4 +173,7 @@ public final class Bazaar extends JavaPlugin {
     }
 
 
+    public BazaarDatabase getDatabase() {
+        return database;
+    }
 }

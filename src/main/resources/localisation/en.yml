@@ -1,4 +1,4 @@
-# This plugin uses MiniMessage.
+# This plugin uses MiniMessage for formatting.
 # Check https://docs.advntr.dev/minimessage/index.html for more info about formatting with MiniMessage.
 # You can also use MiniMessage's web preview: https://webui.advntr.dev/
 
@@ -10,4 +10,10 @@ message:
   shop: # <id>
     removed: "<red>Removed shop <yellow><id></yellow>"
     removed-error: "<red>No shops found"
+    db-error: "<red>An error has occurred while trying to delete this shop."
     created: "<green>Successfully created a shop with id <yellow><id></yellow>"
+
+debug:
+  database:
+    connection-successful: "Connected to the database."
+    connection-failed: "There was an error when trying to connect to plugin's database. Disabling plugin..."

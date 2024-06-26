@@ -1,3 +1,5 @@
-# Available languages can be found in the localisation folder
+# Available localisations can be found in the localisation folder
+# You can also add your own localisation by adding a YAML file in the localisation folder
+# and following the same structure as the other localisation files
 localisation: en
 
