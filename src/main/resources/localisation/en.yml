@@ -15,12 +15,12 @@ message:
 gui:
   market:
     item:
-      lore: # <seller>, <price>, <age>, <tax> (defined by tax and no-tax), <infinite> (defined by infinite)
-        - "<!i><gray>Seller:</gray> <white><seller></white>"
-        - "<!i><gray>Price:</gray> <gold><price></gold>"
+      lore: # <seller>, <price>, <age>, <tax> (defined by tax and no-tax)
+        - "<!i><dark_gray>Seller:</dark_gray> <white><seller></white>"
+        - "<!i><dark_gray>Price:</dark_gray> <gold><price></gold>"
         - "<!i><tax>"
+        - ""
         - "<!i><gray><age></gray>"
-        - "<!i><infinite>"
       tax: "<dark_gray>Includes a <tax_percentage> tax (<tax_amount>)" # <tax_percentage>, <tax_amount>
       no-tax: "<dark_gray>Not taxed."
       infinite: "<dark_gray>This item's stock is infinite." # Empty if item's stock is not infinite.
@@ -31,19 +31,19 @@ debug:
     connection-failed: "There was an error when trying to connect to plugin's database. Disabling plugin..."
 
 time: # <time>
-  years: "<time> years ago."
-  year: "A year ago."
-  months: "<time> months ago."
-  month: "A month ago."
-  weeks: "<time> weeks ago."
-  week: "A week ago."
-  days: "<time> days ago."
-  day: "A day ago."
-  hours: "<time> hours ago."
-  hour: "An hour ago."
-  minutes: "<time> minutes ago."
-  minute: "A minute ago."
-  seconds: "<time> seconds ago."
-  second: "A second ago."
+  years: "<time> years ago"
+  year: "A year ago"
+  months: "<time> months ago"
+  month: "A month ago"
+  weeks: "<time> weeks ago"
+  week: "A week ago"
+  days: "<time> days ago"
+  day: "A day ago"
+  hours: "<time> hours ago"
+  hour: "An hour ago"
+  minutes: "<time> minutes ago"
+  minute: "A minute ago"
+  seconds: "<time> seconds ago"
+  second: "A second ago"
 
 

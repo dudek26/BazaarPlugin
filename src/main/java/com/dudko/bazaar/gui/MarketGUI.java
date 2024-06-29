@@ -18,9 +18,9 @@ import xyz.xenondevs.invui.item.impl.SimpleItem;
 import xyz.xenondevs.invui.window.Window;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 public class MarketGUI {
@@ -29,11 +29,7 @@ public class MarketGUI {
     private final Bazaar plugin = Bazaar.getPlugin();
 
     public void display(Player player, Market market) {
-        List<Item> items = market
-                .getMarketItems()
-                .stream()
-                .map(this::marketItem)
-                .collect(Collectors.toList());
+        List<Item> items = market.getMarketItems().stream().map(this::marketItem).toList();
 
         Gui gui = PagedGui
                 .items()
@@ -55,12 +51,15 @@ public class MarketGUI {
     }
 
     public Item marketItem(MarketItem marketItem) {
-        ItemStack item = marketItem.getItemStack();
+        ItemStack item = marketItem.getItemStack().clone();
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        List<Component> lore = meta.lore();
-        if (lore == null) {
-            lore = List.of(Component.empty());
+
+        List<Component> lore;
+        if (meta.hasLore()) lore = new ArrayList<>(Objects.requireNonNull(meta.lore()));
+        else {
+            lore = new ArrayList<>();
+            lore.add(Component.empty());
         }
 
         if (lore.getLast() != Component.empty()) {
@@ -71,6 +70,10 @@ public class MarketGUI {
                             .stream()
                             .map(s -> parsedComponent(s, marketItem))
                             .toList());
+        if (marketItem.isInfinite()) {
+            lore.add(Component.empty());
+            lore.add(mm.deserialize(plugin.translatedString("gui.market.item.infinite")));
+        }
         meta.lore(lore);
         item.setItemMeta(meta);
         return new SimpleItem(item);
@@ -88,15 +91,12 @@ public class MarketGUI {
                              .replace("<tax_amount>",
                                       Double.toString(marketItem.getTaxAmount() * marketItem.getPrice())) :
                      "gui.market.item.no-tax";
-        String infinite = marketItem.isInfinite() ? plugin.translatedString("gui.market.item.infinite") : "";
-        if (!marketItem.isInfinite() && string.contains("<infinite>")) return Component.empty();
 
         return mm.deserialize(string,
                               Placeholder.unparsed("price", Double.toString(marketItem.getPrice())),
                               Placeholder.unparsed("seller", Objects.requireNonNull(marketItem.getSeller().getName())),
                               Placeholder.parsed("age", time),
-                              Placeholder.parsed("tax", tax),
-                              Placeholder.parsed("infinite", infinite));
+                              Placeholder.parsed("tax", tax));
     }
 
 }
