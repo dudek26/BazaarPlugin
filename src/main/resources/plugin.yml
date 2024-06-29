@@ -13,3 +13,7 @@ commands:
     description: Removes a shop.
     usage: /<command> <id>
     permission: bazaar.admin
+  additem:
+    description: Adds a market item.
+    usage: /<command> <market id>
+    permission: bazaar.admin

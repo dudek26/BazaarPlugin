@@ -1,5 +1,8 @@
 package com.dudko.bazaar.market;
 
+import com.google.gson.Gson;
+
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -36,6 +39,39 @@ public class MarketTax {
 
     public double calculateTax(double price) {
         return price * tax;
+    }
+
+    public String serialize() {
+        return new Gson().toJson(this);
+    }
+
+    public static MarketTax deserialize(String serialized) {
+        return new Gson().fromJson(serialized, MarketTax.class);
+    }
+
+    public static class MarketTaxList {
+
+        private List<MarketTax> marketTaxes;
+
+        public MarketTaxList(List<MarketTax> marketTaxes) {
+            this.marketTaxes = marketTaxes;
+        }
+
+        public List<MarketTax> getMarketTaxes() {
+            return marketTaxes;
+        }
+
+        public void setMarketTaxes(List<MarketTax> marketTaxes) {
+            this.marketTaxes = marketTaxes;
+        }
+
+        public void removeMarketTax(MarketTax marketTax) {
+            marketTaxes.remove(marketTax);
+        }
+
+        public void addMarketTax(MarketTax marketTax) {
+            marketTaxes.add(marketTax);
+        }
     }
 }
 

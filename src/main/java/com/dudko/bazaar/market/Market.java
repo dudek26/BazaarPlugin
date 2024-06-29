@@ -20,6 +20,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -125,6 +126,15 @@ public class Market {
             success = false;
         }
         return success;
+    }
+
+    public List<MarketItem> getMarketItems() {
+        try {
+            return plugin.getDatabase().getMarketItems(uniqueID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     private static final float SIZE = 0.6F;

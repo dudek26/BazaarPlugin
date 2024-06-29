@@ -1,6 +1,7 @@
 package com.dudko.bazaar.listener;
 
 import com.dudko.bazaar.Bazaar;
+import com.dudko.bazaar.gui.MarketGUI;
 import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.market.Market;
 import com.dudko.bazaar.market.MarketSettings;
@@ -17,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class WorldEventListener implements Listener {
@@ -32,7 +34,10 @@ public class WorldEventListener implements Listener {
             event.setCancelled(true);
             Location location = event.getBlockPlaced().getLocation();
 
-            Market market = new Market(player, player.getName() + "'s Shop", new MarketSettings(false), new SimpleLocation(location));
+            Market market = new Market(player,
+                                       player.getName() + "'s Shop",
+                                       new MarketSettings(false),
+                                       new SimpleLocation(location));
             market.create();
             player.sendMessage(mm.deserialize(plugin.translatedString("message.shop.created"),
                                               Placeholder.unparsed("id", market.getUUID().toString())));
@@ -59,12 +64,19 @@ public class WorldEventListener implements Listener {
 
             UUID UUID = Market.getUUID(entity);
             assert UUID != null;
-            Player p = event.getPlayer();
-            p.openInventory(p.getInventory());
-            p.sendMessage(mm.deserialize(
-                    "Clicked shop's UUID: <yellow><hover:show_text:'<red>Click to delete</red>'><click:run_command:'/removeshop <uuid>'><uuid></click></hover></yellow>".replace(
-                            "<uuid>",
-                            UUID.toString())));
+            try {
+                if (!plugin.getDatabase().marketExists(UUID)) return;
+                Market market = plugin.getDatabase().getMarket(UUID);
+                Player p = event.getPlayer();
+                new MarketGUI().display(p, market);
+                p.sendMessage(mm.deserialize(
+                        "Clicked shop's UUID: <yellow><hover:show_text:'<red>Click to delete</red>'><click:run_command:'/removemarket <uuid>'><uuid></click></hover></yellow>".replace(
+                                "<uuid>",
+                                UUID.toString())));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
 
         }
     }

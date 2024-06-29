@@ -1,8 +1,10 @@
 package com.dudko.bazaar;
 
+import com.dudko.bazaar.command.AddItemCommand;
 import com.dudko.bazaar.command.BazaarCommand;
 import com.dudko.bazaar.command.RemoveMarketCommand;
 import com.dudko.bazaar.database.BazaarDatabase;
+import com.dudko.bazaar.gui.GlobalItems;
 import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.listener.WorldEventListener;
 import org.bukkit.Bukkit;
@@ -61,8 +63,11 @@ public final class Bazaar extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
+        GlobalItems.init();
+
         getCommand("bazaar").setExecutor(new BazaarCommand());
         getCommand("removemarket").setExecutor(new RemoveMarketCommand());
+        getCommand("additem").setExecutor(new AddItemCommand());
 
         getServer().getPluginManager().registerEvents(new WorldEventListener(), this);
 

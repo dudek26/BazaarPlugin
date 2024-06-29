@@ -1,5 +1,7 @@
 package com.dudko.bazaar.market;
 
+import com.google.gson.Gson;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,17 +12,18 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class MarketItem {
 
+    private final UUID id;
     private ItemStack itemStack;
     private double price;
     private List<MarketTax> taxes;
-    private UUID sellerUUID;
+    private OfflinePlayer seller;
     private UUID shopUUID;
     private boolean infinite;
     private final long creationDate;
     private boolean stashed;
 
     /**
-     * Creates a new MarketItem object.
+     * Creates a new MarketItem object. Used when creating a new item.
      *
      * @param itemStack The item to sell.
      * @param shopUUID  The UUID of the shop.
@@ -29,10 +32,11 @@ public class MarketItem {
      * @param taxes     The list of taxes to apply.
      */
     public MarketItem(ItemStack itemStack, UUID shopUUID, OfflinePlayer seller, double price, List<MarketTax> taxes) {
+        this.id = UUID.randomUUID();
         this.itemStack = itemStack;
         this.price = price;
         this.taxes = taxes;
-        this.sellerUUID = seller.getUniqueId();
+        this.seller = seller;
         this.shopUUID = shopUUID;
         this.infinite = false;
         this.stashed = false;
@@ -40,8 +44,9 @@ public class MarketItem {
     }
 
     /**
-     * Creates a new MarketItem object.
+     * Creates a new MarketItem object. Used when retrieving items from the database.
      *
+     * @param id           The UUID of the item.
      * @param itemStack    The item to sell.
      * @param shopUUID     The UUID of the shop.
      * @param sellerUUID   The UUID of the seller.
@@ -51,15 +56,20 @@ public class MarketItem {
      * @param stashed      Whether the item is stashed.
      * @param creationDate The creation date of the item in seconds since the epoch.
      */
-    public MarketItem(ItemStack itemStack, UUID shopUUID, UUID sellerUUID, double price, List<MarketTax> taxes, boolean infinite, boolean stashed, long creationDate) {
+    public MarketItem(UUID id, ItemStack itemStack, UUID shopUUID, UUID sellerUUID, double price, List<MarketTax> taxes, boolean infinite, boolean stashed, long creationDate) {
+        this.id = id;
         this.itemStack = itemStack;
         this.price = price;
         this.taxes = taxes;
-        this.sellerUUID = sellerUUID;
+        this.seller = Bukkit.getOfflinePlayer(sellerUUID);
         this.shopUUID = shopUUID;
         this.infinite = infinite;
         this.stashed = stashed;
         this.creationDate = creationDate;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public ItemStack getItemStack() {
@@ -86,12 +96,12 @@ public class MarketItem {
         this.taxes = tax;
     }
 
-    public UUID getSellerUUID() {
-        return sellerUUID;
+    public OfflinePlayer getSeller() {
+        return seller;
     }
 
-    public void setSellerUUID(UUID sellerUUID) {
-        this.sellerUUID = sellerUUID;
+    public void setSeller(OfflinePlayer sellerUUID) {
+        this.seller = sellerUUID;
     }
 
     public UUID getShopUUID() {
@@ -120,5 +130,21 @@ public class MarketItem {
 
     public void setStashed(boolean stashed) {
         this.stashed = stashed;
+    }
+
+    public String taxesSerialized() {
+        return new Gson().toJson(new MarketTax.MarketTaxList(taxes));
+    }
+
+    public static List<MarketTax> taxesDeserialized(String taxes) {
+        return new Gson().fromJson(taxes, MarketTax.MarketTaxList.class).getMarketTaxes();
+    }
+
+    public boolean isTaxIncluded() {
+        return taxes.stream().anyMatch(t -> t.getTax() > 0);
+    }
+
+    public double getTaxAmount() {
+        return taxes.stream().mapToDouble(MarketTax::getTax).sum();
     }
 }
