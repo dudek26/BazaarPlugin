@@ -17,3 +17,5 @@ commands:
     description: Adds a market item.
     usage: /<command> <market id>
     permission: bazaar.admin
+depend:
+  - Vault

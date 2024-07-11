@@ -1,7 +1,6 @@
 package com.dudko.bazaar.database;
 
 import com.dudko.bazaar.Bazaar;
-import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.item.SerializedItem;
 import com.dudko.bazaar.market.Market;
 import com.dudko.bazaar.market.MarketItem;
@@ -131,15 +130,13 @@ public class BazaarDatabase {
      * Remove a market item from the database
      *
      * @param uniqueID the UUID of the market item to remove
-     * @return {@code true} if the market item was removed, {@code false} if it didn't exist
      */
-    public boolean removeMarketItem(UUID uniqueID) throws SQLException {
-        if (!marketItemExists(uniqueID)) return false;
+    public void removeMarketItem(UUID uniqueID) throws SQLException {
+        if (!marketItemExists(uniqueID)) return;
         String str = "DELETE FROM MarketItems WHERE UUID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(str)) {
             preparedStatement.setString(1, uniqueID.toString());
             preparedStatement.executeUpdate();
-            return true;
         }
     }
 

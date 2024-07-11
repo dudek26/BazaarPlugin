@@ -7,10 +7,12 @@ import com.dudko.bazaar.database.BazaarDatabase;
 import com.dudko.bazaar.gui.GlobalItems;
 import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.listener.WorldEventListener;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -22,6 +24,7 @@ import java.util.List;
 public final class Bazaar extends JavaPlugin {
 
     private static Bazaar plugin;
+    private static Economy econ = null;
 
     private FileConfiguration localisation;
     private FileConfiguration defaultLocalisation;
@@ -35,6 +38,22 @@ public final class Bazaar extends JavaPlugin {
      */
     public static Bazaar getPlugin() {
         return plugin;
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return true;
+    }
+
+    public static Economy getEconomy() {
+        return econ;
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -63,6 +82,7 @@ public final class Bazaar extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
+        setupEconomy();
         GlobalItems.init();
 
         getCommand("bazaar").setExecutor(new BazaarCommand());
@@ -173,7 +193,7 @@ public final class Bazaar extends JavaPlugin {
     public List<String> translatedStringList(String key) {
         List<String> list = getLocalisation().getStringList(key);
         if (list.isEmpty()) getLocalisation(true).getStringList(key);
-        if (list.isEmpty()) list.add(key);
+        if (list.isEmpty()) list.add(key + " (list)");
         return list;
     }
 

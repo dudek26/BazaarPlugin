@@ -1,15 +1,22 @@
 package com.dudko.bazaar.market;
 
+import com.dudko.bazaar.Bazaar;
 import com.google.gson.Gson;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "CallToPrintStackTrace"})
 public class MarketItem {
 
     private final UUID id;
@@ -146,5 +153,65 @@ public class MarketItem {
 
     public double getTaxAmount() {
         return taxes.stream().mapToDouble(MarketTax::getTax).sum();
+    }
+
+    public double getTaxedPrice() {
+        return price - price * getTaxAmount();
+    }
+
+    /**
+     * Tries to buy the item from the market.
+     *
+     * @param player The player buying the item.
+     * @return Result of the purchase.
+     */
+    public BuyResult buy(Player player) {
+        try {
+            if (!Bazaar.getPlugin().getDatabase().marketItemExists(id)) return BuyResult.ITEM_DOES_NOT_EXIST;
+            if (!Bazaar.getPlugin().getDatabase().marketExists(shopUUID)) return BuyResult.MARKET_DOES_NOT_EXIST;
+            if (stashed) return BuyResult.ITEM_DOES_NOT_EXIST;
+
+            Economy econ = Bazaar.getEconomy();
+            Market market = Bazaar.getPlugin().getDatabase().getMarket(shopUUID);
+            Location marketLocation = market.getSimpleLocation().toLocation();
+            String worldName = marketLocation.getWorld().getName();
+
+            if (!econ.has(player, worldName, price)) return BuyResult.NOT_ENOUGH_MONEY;
+
+//            if (player.getInventory().firstEmpty() == -1) return BuyResult.NO_INVENTORY_SPACE;
+            if (player.getInventory().firstEmpty() == -1) {
+                if (itemStack.getMaxStackSize() == 1) return BuyResult.NO_INVENTORY_SPACE;
+                if (Arrays
+                        .stream(player.getInventory().getStorageContents())
+                        .filter(Objects::nonNull)
+                        .noneMatch(i -> i.isSimilar(itemStack)
+                                        && i.getMaxStackSize() >= i.getAmount() + itemStack.getAmount()))
+                    return BuyResult.NO_INVENTORY_SPACE;
+            }
+
+            if (!infinite) Bazaar.getPlugin().getDatabase().removeMarketItem(id);
+            econ.withdrawPlayer(player, worldName, price);
+            econ.depositPlayer(seller, worldName, getTaxedPrice());
+
+            taxes.forEach(tax -> econ.depositPlayer(Bukkit.getOfflinePlayer(tax.getReceiver()),
+                                                    worldName,
+                                                    tax.calculateTax(price)));
+
+            player.getInventory().addItem(itemStack);
+
+            return BuyResult.SUCCESS;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return BuyResult.SQL_EXCEPTION;
+        }
+    }
+
+    public enum BuyResult {
+        SUCCESS,
+        NOT_ENOUGH_MONEY,
+        NO_INVENTORY_SPACE,
+        ITEM_DOES_NOT_EXIST,
+        MARKET_DOES_NOT_EXIST,
+        SQL_EXCEPTION
     }
 }

@@ -30,7 +30,7 @@ public class WorldEventListener implements Listener {
     public static void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
 
-        if (event.getItemInHand().isSimilar(ItemManager.GLASS_DISPLAY_SHOP)) {
+        if (event.getItemInHand().isSimilar(ItemManager.MARKET)) {
             event.setCancelled(true);
             Location location = event.getBlockPlaced().getLocation();
 
@@ -43,7 +43,7 @@ public class WorldEventListener implements Listener {
                                               Placeholder.unparsed("id", market.getUUID().toString())));
             if (player.getGameMode() != GameMode.CREATIVE) player.getInventory().remove(event.getItemInHand());
         }
-        else if (event.getItemInHand().isSimilar(ItemManager.GLASS_DISPLAY_ADMIN_SHOP)) {
+        else if (event.getItemInHand().isSimilar(ItemManager.ADMIN_MARKET)) {
             event.setCancelled(true);
             Location location = event.getBlockPlaced().getLocation();
 
@@ -68,9 +68,9 @@ public class WorldEventListener implements Listener {
                 if (!plugin.getDatabase().marketExists(UUID)) return;
                 Market market = plugin.getDatabase().getMarket(UUID);
                 Player p = event.getPlayer();
-                new MarketGUI().display(p, market);
+                new MarketGUI(market).display(p);
                 p.sendMessage(mm.deserialize(
-                        "Clicked shop's UUID: <yellow><hover:show_text:'<red>Click to delete</red>'><click:run_command:'/removemarket <uuid>'><uuid></click></hover></yellow>".replace(
+                        "Clicked shop's UUID: <yellow><hover:show_text:'<white>Click to copy the UUID</white>'><click:suggest_command:'<uuid>'><uuid></click></hover></yellow>".replace(
                                 "<uuid>",
                                 UUID.toString())));
             } catch (SQLException e) {

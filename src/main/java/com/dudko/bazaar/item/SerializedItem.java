@@ -3,6 +3,7 @@ package com.dudko.bazaar.item;
 import com.dudko.bazaar.Bazaar;
 import com.google.gson.Gson;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -29,7 +30,7 @@ public class SerializedItem {
     }
 
     public ItemStack toItemStack() {
-        return Bukkit.getItemFactory().createItemStack(itemTypeKey+components).asQuantity(quantity);
+        return Bukkit.getItemFactory().createItemStack(itemTypeKey + components).asQuantity(quantity);
     }
 
 }

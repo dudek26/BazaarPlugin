@@ -33,7 +33,7 @@ public class MarketTax {
         this.receiver = receiver;
     }
 
-    public static double cappedTax(double tax) {
+    private static double cappedTax(double tax) {
         return Math.min(Math.max(tax, 0.0), 1.0);
     }
 

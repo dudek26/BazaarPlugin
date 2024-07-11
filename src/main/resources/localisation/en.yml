@@ -13,17 +13,73 @@ message:
     created: "<green>Successfully created a shop with id <yellow><id></yellow>"
 
 gui:
+  close-item:
+    name: "<red>Close menu</red>"
+    lore:
+      - ""
+
+  next-page-item: # <page>, <pages>
+    name: "<yellow>Next page</yellow>"
+    lore:
+      - "<!i><white>Go to page: <yellow><page></yellow>/<yellow><pages>"
+  previous-page-item: # <page>, <pages>
+    name: "<yellow>Previous page</yellow>"
+    lore:
+      - "<!i><white>Go to page: <yellow><page></yellow>/<yellow><pages>"
+
   market:
+
+    buy-title: "Buy item" # Does NOT support MiniMessage formatting. Please use '&' or '§' for formatting.
+
+    buy-item:
+      name: "<gold>Buy it now"
+      lore: # <seller>, <price>, <age>, <tax> (defined by tax and no-tax)
+        - "<!i><dark_gray>Seller:</dark_gray> <white><seller></white>"
+        - "<!i><dark_gray>Price:</dark_gray> <gold><currency><price></gold>"
+        - "<!i><tax>"
+      tax: "<dark_gray>Includes a <tax_percentage> tax (<currency><tax_amount>)" # <tax_percentage>, <tax_amount>
+      no-tax: "<dark_gray>Not taxed."
+
+    back-item:
+      name: "<red>Back"
+      lore:
+        - "<!i><gray>Go back to browsing the market"
+
     item:
       lore: # <seller>, <price>, <age>, <tax> (defined by tax and no-tax)
         - "<!i><dark_gray>Seller:</dark_gray> <white><seller></white>"
-        - "<!i><dark_gray>Price:</dark_gray> <gold><price></gold>"
+        - "<!i><dark_gray>Price:</dark_gray> <gold><currency><price></gold>"
         - "<!i><tax>"
         - ""
         - "<!i><gray><age></gray>"
-      tax: "<dark_gray>Includes a <tax_percentage> tax (<tax_amount>)" # <tax_percentage>, <tax_amount>
+      tax: "<dark_gray>Includes a <tax_percentage> tax (<currency><tax_amount>)" # <tax_percentage>, <tax_amount>
       no-tax: "<dark_gray>Not taxed."
       infinite: "<dark_gray>This item's stock is infinite." # Empty if item's stock is not infinite.
+
+    confirmation:
+      title: "Are you sure?" # Does NOT support MiniMessage formatting. Please use '&' or '§' for formatting.
+      item-name: "<yellow><bold>PURCHASING: </bold></yellow><item_name>" # <item_name>
+      confirm-item: # <item_name>, <price>, <seller>, <balance>, <balance_after> (player's balance minus the price), <currency>
+        name: "<green>Confirm purchase"
+        lore:
+          - "<!i><gray>Seller:</gray> <white><seller></white>"
+          - "<!i><gray>Price:</gray> <gold><currency><price></gold>"
+          - ""
+          - "<!i><gray>Your balance:</gray> <yellow><currency><balance></yellow>"
+          - "<!i><gray>Balance after purchase: </gray><yellow><currency><balance_after></yellow>"
+      cancel-item:
+        name: "<red>Cancel purchase"
+        lore:
+          - "<!i><gray>Go back to browsing"
+          - "<!i><gray>the market."
+
+    message:
+      error: "<red>An error has occurred while trying to browse this item."
+      buy-error: "<red>Could not buy this item <gray>(<error>)" # <error>
+      not-enough-money: "<red>You don't have enough money to buy this item." # <currency>, <price>
+      item-unavailable: "<red>This item is no longer available."
+      item-bought: "<green>You have successfully purchased <seller>'s <item> for <gold><currency><price></gold>" # <price>, <seller>, <item> (shows item on hover), <item_name>, <currency>
+      no-inventory-space: "<red>You don't have enough space in your inventory!"
 
 debug:
   database:
