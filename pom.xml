@@ -38,7 +38,7 @@
                             <goal>shade</goal>
                         </goals>
 <!--                        <configuration>-->
-<!--                            <minimizeJar>true</minimizeJar>-->
+<!--                            <minimizeJar>true</minimizeJar>  can't use that because InvUI breaks-->
 <!--                        </configuration>-->
                     </execution>
                 </executions>

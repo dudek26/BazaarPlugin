@@ -1,7 +1,8 @@
 package com.dudko.bazaar.listener;
 
 import com.dudko.bazaar.Bazaar;
-import com.dudko.bazaar.gui.MarketGUI;
+import com.dudko.bazaar.gui.MarketItemsGUI;
+import com.dudko.bazaar.gui.MarketMainGUI;
 import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.market.Market;
 import com.dudko.bazaar.market.MarketSettings;
@@ -68,7 +69,7 @@ public class WorldEventListener implements Listener {
                 if (!plugin.getDatabase().marketExists(UUID)) return;
                 Market market = plugin.getDatabase().getMarket(UUID);
                 Player p = event.getPlayer();
-                new MarketGUI(market).display(p);
+                new MarketMainGUI(market, p).display();
                 p.sendMessage(mm.deserialize(
                         "Clicked shop's UUID: <yellow><hover:show_text:'<white>Click to copy the UUID</white>'><click:suggest_command:'<uuid>'><uuid></click></hover></yellow>".replace(
                                 "<uuid>",

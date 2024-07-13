@@ -2,18 +2,17 @@ package com.dudko.bazaar.item;
 
 import com.dudko.bazaar.Bazaar;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemManager {
 
@@ -78,5 +77,29 @@ public class ItemManager {
         }
         assert name != null;
         return name;
+    }
+
+    /**
+     * Create a simple item with a name and lore
+     *
+     * @param material        material of the item
+     * @param localisationKey key of the item in the lang file. <br>Create string localisation for <b>xxx.name</b> and a string list localisation for <b>xxx.lore</b>
+     * @return the item created
+     */
+    @NotNull
+    public static ItemStack simpleFormattedItem(Material material, String localisationKey) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+
+        meta.itemName(mm.deserialize(Bazaar.getPlugin().translatedString(localisationKey + ".name")));
+        List<String> loreStrings = Bazaar.getPlugin().translatedStringList(localisationKey + ".lore");
+        if (loreStrings.toArray().length > 1 || !loreStrings.getFirst().isEmpty()) {
+            List<Component> lore = new ArrayList<>(loreStrings.stream().map(mm::deserialize).toList());
+            meta.lore(lore);
+        }
+        item.setItemMeta(meta);
+
+        return item;
     }
 }

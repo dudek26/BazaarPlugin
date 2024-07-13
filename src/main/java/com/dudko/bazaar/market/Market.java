@@ -67,6 +67,14 @@ public class Market {
         return owner;
     }
 
+    public boolean isOwner(OfflinePlayer player) {
+        return owner.getUniqueId().equals(player.getUniqueId());
+    }
+
+    public boolean isCoOwner(OfflinePlayer player) {
+        return settings.isCoOwner(player);
+    }
+
     public String getName() {
         return name;
     }

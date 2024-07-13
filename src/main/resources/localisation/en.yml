@@ -1,6 +1,9 @@
 # This plugin uses MiniMessage for formatting.
 # Check https://docs.advntr.dev/minimessage/index.html for more info about formatting with MiniMessage.
 # You can also use MiniMessage's web preview: https://webui.advntr.dev/
+#
+# Note, that GUI titles do NOT support MiniMessage formatting. Instead, you should use '§' for formatting.
+# This may be changed in the future.
 
 message:
   command: # <usage>
@@ -29,6 +32,18 @@ gui:
 
   market:
 
+    browse-item:
+      name: "<yellow>Browse Items"
+      lore:
+        - "<!i><gray>Browse the items that"
+        - "<!i><gray>are listed on this market."
+
+    manage-item:
+      name: "<yellow>Manage Items"
+      lore:
+        - "<!i><gray>Manage or list new"
+        - "<!i><gray>items on the market."
+
     buy-title: "Buy item" # Does NOT support MiniMessage formatting. Please use '&' or '§' for formatting.
 
     buy-item:
@@ -40,7 +55,13 @@ gui:
       tax: "<dark_gray>Includes a <tax_percentage> tax (<currency><tax_amount>)" # <tax_percentage>, <tax_amount>
       no-tax: "<dark_gray>Not taxed."
 
-    back-item:
+    back-to-main-menu-item:
+      name: "<red>Back"
+      lore:
+        - "<!i><gray>Go back to market's"
+        - "<!i><gray>main menu."
+
+    back-to-browsing-item:
       name: "<red>Back"
       lore:
         - "<!i><gray>Go back to browsing the market"

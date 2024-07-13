@@ -2,7 +2,9 @@ package com.dudko.bazaar.market;
 
 import com.google.gson.Gson;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +86,7 @@ public class MarketSettings {
      *
      * @return List of co-owners.
      */
-    public List<MarketCoowner> getCoowners() {
+    public List<MarketCoowner> getCoOwners() {
         return coowners;
     }
 
@@ -94,7 +96,7 @@ public class MarketSettings {
      *
      * @param coowners List of co-owners.
      */
-    public void setCoowners(List<MarketCoowner> coowners) {
+    public void setCoOwners(List<MarketCoowner> coowners) {
         this.coowners = coowners;
     }
 
@@ -104,7 +106,7 @@ public class MarketSettings {
      * @param p   Player to add as a co-owner.
      * @param cut Cut percentage of the shop's transactions for the co-owner.
      */
-    public void addCoowner(Player p, float cut) {
+    public void addCoOwner(OfflinePlayer p, float cut) {
         this.coowners.add(new MarketCoowner(p, cut));
     }
 
@@ -113,7 +115,7 @@ public class MarketSettings {
      *
      * @param p Player to remove as a co-owner.
      */
-    public void removeCoowner(Player p) {
+    public void removeCoOwner(OfflinePlayer p) {
         this.coowners.stream().filter(c -> c.getUniqueID().equals(p.getUniqueId())).forEach(this.coowners::remove);
     }
 
@@ -123,7 +125,7 @@ public class MarketSettings {
      * @param p Player to check.
      * @return True if the player is a co-owner, false otherwise.
      */
-    public boolean isCoowner(Player p) {
+    public boolean isCoOwner(OfflinePlayer p) {
         return this.coowners.stream().anyMatch(c -> c.getUniqueID().equals(p.getUniqueId()));
     }
 
@@ -133,7 +135,8 @@ public class MarketSettings {
      * @param p Player to get the co-owner of.
      * @return The co-owner object of the player, or null if not found.
      */
-    public MarketCoowner getCoowner(Player p) {
+    @Nullable
+    public MarketCoowner getCoOwner(OfflinePlayer p) {
         return this.coowners.stream().filter(c -> c.getUniqueID().equals(p.getUniqueId())).findFirst().orElse(null);
     }
 

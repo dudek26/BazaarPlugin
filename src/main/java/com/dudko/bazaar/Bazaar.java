@@ -4,16 +4,18 @@ import com.dudko.bazaar.command.AddItemCommand;
 import com.dudko.bazaar.command.BazaarCommand;
 import com.dudko.bazaar.command.RemoveMarketCommand;
 import com.dudko.bazaar.database.BazaarDatabase;
-import com.dudko.bazaar.gui.GlobalItems;
+import com.dudko.bazaar.gui.items.BlankItem;
 import com.dudko.bazaar.item.ItemManager;
 import com.dudko.bazaar.listener.WorldEventListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import xyz.xenondevs.invui.gui.structure.Structure;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +85,7 @@ public final class Bazaar extends JavaPlugin {
         }
 
         setupEconomy();
-        GlobalItems.init();
+        Structure.addGlobalIngredient('#', new BlankItem(Material.GRAY_STAINED_GLASS_PANE));
 
         getCommand("bazaar").setExecutor(new BazaarCommand());
         getCommand("removemarket").setExecutor(new RemoveMarketCommand());
@@ -179,8 +181,14 @@ public final class Bazaar extends JavaPlugin {
      */
     public String translatedString(String key) {
         String string = getLocalisation().getString(key);
-        if (string == null) getLocalisation(true).getString(key);
-        if (string == null) string = key;
+        if (string == null) {
+            getLocalisation(true).getString(key);
+            Bukkit.getServer().getLogger().warning("[Bazaar] Missing translation for \"" + key + "\". Switching to default localisation...");
+        }
+        if (string == null) {
+            string = key;
+            Bukkit.getServer().getLogger().warning("[Bazaar] Missing default translation for \"" + key + "\"");
+        }
         return string;
     }
 
